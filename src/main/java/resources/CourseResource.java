@@ -1,6 +1,7 @@
 package resources;
 
 import java.net.URI;
+import java.util.List;
 
 import dtos.CourseCreateDTO;
 import dtos.CourseReadDTO;
@@ -20,6 +21,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import results.Result;
 import services.CourseService;
 
 @Path("/courses")
@@ -38,48 +40,68 @@ public class CourseResource {
 
     @GET
     public Response getAllCourses() {
-        var courses = courseService.getAllCourses();
-        var courseDtos = CourseReadDTO.fromEntities(courses);
+        var result = courseService.getAllCourses();
+        var courseDtos = CourseReadDTO.fromEntities(result.data());
+        var response = Result.success(courseDtos);
 
-        return Response.ok(courseDtos).build();
+        return Response.ok(response).build();
     }
 
     @GET
     @Path("/{id}")
     public Response getCourseById(Long id) {
         var course = courseService.getCourseById(id);
-        var courseDto = CourseReadDTO.fromEntity(course);
+        var courseDto = CourseReadDTO.fromEntity(course.data());
+        var response = Result.success(courseDto);
 
-        return Response.ok(courseDto).build();
+        return Response.ok(response).build();
     }
 
     @POST
     public Response createCourse(CourseCreateDTO courseCreateDTO) {
         var course = courseCreateDTO.toEntity();
-        courseService.createCourse(course);
-        var courseDto = CourseReadDTO.fromEntity(course);
+        var result = courseService.createCourse(course);
 
-        return Response.created(URI.create("/courses/" + course.getId())).entity(courseDto).build();
+        if (result.failure()) {
+            var response = Result.failure(result.errors());
+            return Response.status(Status.BAD_REQUEST).entity(response).build();
+        }
+
+        var response = Result.success(null);
+
+        return Response.created(URI.create("/courses/" + course.getId())).entity(response).build();
     }
 
     @PUT
     @Path("/{id}")
     public Response updateCourse(Long id, CourseUpdateDTO courseUpdateDTO) {
         if (!id.equals(courseUpdateDTO.id())) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            var response = Result.failure(List.of("ID do caminho e do corpo devem ser iguais."));
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
         }
 
         var course = courseUpdateDTO.toEntity();
-        courseService.updateCourse(course);
-        var courseDto = CourseReadDTO.fromEntity(course);
+        var result = courseService.updateCourse(course);
+        if (result.failure()) {
+            var response = Result.failure(result.errors());
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        }
 
-        return Response.ok(courseDto).build();
+        var courseDto = CourseReadDTO.fromEntity(result.data());
+        var response = Result.success(courseDto);
+
+        return Response.ok(response).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteCourse(Long id) {
-        courseService.deleteCourseById(id);
+        var result = courseService.deleteCourseById(id);
+
+        if (result.failure()) {
+            var response = Result.failure(result.errors());
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        }
 
         return Response.noContent().build();
     }
@@ -88,17 +110,25 @@ public class CourseResource {
     @Path("/{courseId}/lessons")
     public Response getLessonsByCourseId(Long courseId) {
         var lessons = courseService.getLessonsByCourseId(courseId);
-        var lessonDtos = LessonReadDTO.fromEntities(lessons);
+        var lessonDtos = LessonReadDTO.fromEntities(lessons.data());
+        var response = Result.success(lessonDtos);
 
-        return Response.ok(lessonDtos).build();
+        return Response.ok(response).build();
     }
 
     @POST
     @Path("/{courseId}/lessons")
     public Response addLessonToCourse(Long courseId, LessonCreateDTO lessonCreateDTO) {
         var lesson = lessonCreateDTO.toEntity();
-        courseService.addLessonToCourse(courseId, lesson);
+        var result = courseService.addLessonToCourse(courseId, lesson);
 
-        return Response.status(Status.CREATED).build();
+        if (result.failure()) {
+            var response = Result.failure(result.errors());
+            return Response.status(Status.BAD_REQUEST).entity(response).build();
+        }
+
+        var response = Result.success(null);
+
+        return Response.status(Status.CREATED).entity(response).build();
     }
 }

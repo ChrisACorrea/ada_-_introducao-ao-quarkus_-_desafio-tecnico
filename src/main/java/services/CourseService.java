@@ -1,64 +1,104 @@
 package services;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import entities.Course;
 import entities.Lesson;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Validator;
 import repositories.CourseRepository;
+import results.Result;
 
 @ApplicationScoped
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final Validator validator;
 
     @Inject
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, Validator validator) {
         this.courseRepository = courseRepository;
+        this.validator = validator;
     }
 
-    public Set<Course> getAllCourses() {
-        return courseRepository.listAll()
+    public Result<Set<Course>> getAllCourses() {
+        return Result.success(courseRepository.listAll()
                 .stream()
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()));
     }
 
-    public Course getCourseById(Long id) {
+    public Result<Course> getCourseById(Long id) {
         return courseRepository.findByIdOptional(id)
+                .map(Result::success)
                 .orElseThrow();
     }
 
-    public Course createCourse(Course course) {
+    public Result<Course> createCourse(Course course) {
+        var violations = validator.validate(course);
+
+        if (!violations.isEmpty()) {
+            var errors = violations.stream()
+                    .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                    .toList();
+            return Result.failure(errors);
+        }
+
         courseRepository.persist(course);
-        return course;
+        return Result.success(course);
     }
-    
-    public Course updateCourse(Course course) {
+
+    public Result<Course> updateCourse(Course course) {
         courseRepository.findByIdOptional(course.getId())
-            .orElseThrow();
+                .orElseThrow();
+
+        var courseViolations = validator.validate(course);
+        var lessonViolations = course.getLessons()
+                .stream()
+                .flatMap(lesson -> validator.validate(lesson).stream())
+                .toList();
+
+        var allViolations = Stream.concat(courseViolations.stream(), lessonViolations.stream())
+                .toList();
+
+        if (!allViolations.isEmpty()) {
+            var errors = allViolations.stream()
+                    .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                    .toList();
+            return Result.failure(errors);
+        }
 
         courseRepository.getEntityManager().merge(course);
-        return course;
+        return Result.success(course);
     }
 
-    public boolean deleteCourseById(Long id) {
-        return courseRepository.deleteById(id);
+    public Result<Boolean> deleteCourseById(Long id) {
+        boolean deleted = courseRepository.deleteById(id);
+        if (deleted) {
+            return Result.success(true);
+        } else {
+            return Result.failure(List.of("Não foi possível deletar o curso."));
+        }
     }
 
-    public Set<Lesson> getLessonsByCourseId(Long courseId) {
+    public Result<Set<Lesson>> getLessonsByCourseId(Long courseId) {
         Course course = courseRepository.findByIdOptional(courseId)
                 .orElseThrow();
-        return course.getLessons();
+        return Result.success(course.getLessons());
     }
 
-    public void addLessonToCourse(Long courseId, Lesson lesson) {
+    public Result<Boolean> addLessonToCourse(Long courseId, Lesson lesson) {
         Course course = courseRepository.findByIdOptional(courseId)
                 .orElseThrow();
+
         Lesson lessonWithCourse = lesson.withCourse(course);
         course.addLesson(lessonWithCourse);
         courseRepository.getEntityManager().merge(course);
+
+        return Result.success(true);
     }
 
 }
