@@ -9,10 +9,9 @@ public record CourseReadDTO(Long id, String name, Set<LessonReadDTO> lessons) {
 
     public static CourseReadDTO fromEntity(Course course) {
         return new CourseReadDTO(
-            course.getId(),
-            course.getName(),
-            LessonReadDTO.fromEntities(course.getLessons())
-        );
+                course.getId(),
+                course.getName(),
+                LessonReadDTO.fromEntities(course.getLessons()));
     }
 
     public Set<LessonReadDTO> getLessons() {

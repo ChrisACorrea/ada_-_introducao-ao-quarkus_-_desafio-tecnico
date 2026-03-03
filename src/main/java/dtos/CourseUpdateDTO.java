@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import entities.Course;
 
-
 public record CourseUpdateDTO(Long id, String name, Set<LessonUpdateDTO> lessons) {
 
     public Set<LessonUpdateDTO> getLessons() {
@@ -20,5 +19,5 @@ public record CourseUpdateDTO(Long id, String name, Set<LessonUpdateDTO> lessons
         }
         return course;
     }
-    
+
 }

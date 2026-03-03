@@ -79,7 +79,7 @@ public class CourseService {
     public Result<Boolean> deleteCourseById(Long id) {
         var course = courseRepository.findByIdOptional(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + id));
-    
+
         boolean deleted = courseRepository.deleteById(course.getId());
 
         if (deleted) {
