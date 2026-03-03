@@ -91,13 +91,13 @@ public class CourseService {
 
     public Result<Set<Lesson>> getLessonsByCourseId(Long courseId) {
         Course course = courseRepository.findByIdOptional(courseId)
-                .orElseThrow();
+                .orElseThrow(()-> new ResourceNotFoundException("Curso não encontrado com o ID: " + courseId));
         return Result.success(course.getLessons());
     }
 
     public Result<Boolean> addLessonToCourse(Long courseId, Lesson lesson) {
         Course course = courseRepository.findByIdOptional(courseId)
-                .orElseThrow();
+                .orElseThrow(()-> new ResourceNotFoundException("Curso não encontrado com o ID: " + courseId));
 
         Lesson lessonWithCourse = lesson.withCourse(course);
         course.addLesson(lessonWithCourse);
