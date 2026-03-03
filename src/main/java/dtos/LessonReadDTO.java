@@ -1,7 +1,6 @@
 package dtos;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import entities.Lesson;
 
@@ -11,10 +10,10 @@ public record LessonReadDTO(Long id, String name) {
         return new LessonReadDTO(lesson.getId(), lesson.getName());
     }
 
-    public static Set<LessonReadDTO> fromEntities(Set<Lesson> lessons) {
+    public static List<LessonReadDTO> fromEntities(List<Lesson> lessons) {
         return lessons.stream()
                 .map(LessonReadDTO::fromEntity)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
 }

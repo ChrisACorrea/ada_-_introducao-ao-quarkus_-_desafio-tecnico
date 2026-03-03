@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import entities.Course;
+import entities.Course_;
 import entities.Lesson;
 import exceptions.ResourceNotFoundException;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
@@ -26,10 +28,13 @@ public class CourseService {
         this.validator = validator;
     }
 
-    public Result<Set<Course>> getAllCourses() {
-        return Result.success(courseRepository.listAll()
-                .stream()
-                .collect(Collectors.toSet()));
+    public Result<List<Course>> getAllCourses() {
+        var courses = courseRepository.findAll(
+                Sort.by(Course_.NAME)
+                        .and(Course_.ID))
+                .list();
+
+        return Result.success(courses);
     }
 
     public Result<Course> getCourseById(Long id) {
@@ -89,15 +94,15 @@ public class CourseService {
         }
     }
 
-    public Result<Set<Lesson>> getLessonsByCourseId(Long courseId) {
+    public Result<List<Lesson>> getLessonsByCourseId(Long courseId) {
         Course course = courseRepository.findByIdOptional(courseId)
-                .orElseThrow(()-> new ResourceNotFoundException("Curso não encontrado com o ID: " + courseId));
-        return Result.success(course.getLessons());
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + courseId));
+        return Result.success(course.getLessons().stream().toList());
     }
 
     public Result<Boolean> addLessonToCourse(Long courseId, Lesson lesson) {
         Course course = courseRepository.findByIdOptional(courseId)
-                .orElseThrow(()-> new ResourceNotFoundException("Curso não encontrado com o ID: " + courseId));
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + courseId));
 
         Lesson lessonWithCourse = lesson.withCourse(course);
         course.addLesson(lessonWithCourse);

@@ -1,27 +1,26 @@
 package dtos;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import entities.Course;
 
-public record CourseReadDTO(Long id, String name, Set<LessonReadDTO> lessons) {
+public record CourseReadDTO(Long id, String name, List<LessonReadDTO> lessons) {
 
     public static CourseReadDTO fromEntity(Course course) {
         return new CourseReadDTO(
                 course.getId(),
                 course.getName(),
-                LessonReadDTO.fromEntities(course.getLessons()));
+                LessonReadDTO.fromEntities(course.getLessons().stream().toList()));
     }
 
-    public Set<LessonReadDTO> getLessons() {
-        return lessons.stream().collect(Collectors.toUnmodifiableSet());
+    public List<LessonReadDTO> getLessons() {
+        return lessons.stream().toList();
     }
 
-    public static Set<CourseReadDTO> fromEntities(Set<Course> courses) {
+    public static List<CourseReadDTO> fromEntities(List<Course> courses) {
         return courses.stream()
                 .map(CourseReadDTO::fromEntity)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
 }
