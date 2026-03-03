@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import entities.Course;
 import entities.Lesson;
+import exceptions.ResourceNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
@@ -34,7 +35,7 @@ public class CourseService {
     public Result<Course> getCourseById(Long id) {
         return courseRepository.findByIdOptional(id)
                 .map(Result::success)
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + id));
     }
 
     public Result<Course> createCourse(Course course) {
@@ -53,7 +54,7 @@ public class CourseService {
 
     public Result<Course> updateCourse(Course course) {
         courseRepository.findByIdOptional(course.getId())
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + course.getId()));
 
         var courseViolations = validator.validate(course);
         var lessonViolations = course.getLessons()
@@ -76,7 +77,11 @@ public class CourseService {
     }
 
     public Result<Boolean> deleteCourseById(Long id) {
-        boolean deleted = courseRepository.deleteById(id);
+        var course = courseRepository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + id));
+    
+        boolean deleted = courseRepository.deleteById(course.getId());
+
         if (deleted) {
             return Result.success(true);
         } else {
