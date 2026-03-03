@@ -1,14 +1,14 @@
 -- Script para popular o banco com 50 cursos e lições aleatórias
 -- Cursos
-INSERT INTO Course (id, name) VALUES (1, 'Curso 1');
-INSERT INTO Course (id, name) VALUES (2, 'Curso 2');
-INSERT INTO Course (id, name) VALUES (3, 'Curso 3');
-INSERT INTO Course (id, name) VALUES (4, 'Curso 4');
-INSERT INTO Course (id, name) VALUES (5, 'Curso 5');
-INSERT INTO Course (id, name) VALUES (6, 'Curso 6');
-INSERT INTO Course (id, name) VALUES (7, 'Curso 7');
-INSERT INTO Course (id, name) VALUES (8, 'Curso 8');
-INSERT INTO Course (id, name) VALUES (9, 'Curso 9');
+INSERT INTO Course (id, name) VALUES (1, 'Curso 01');
+INSERT INTO Course (id, name) VALUES (2, 'Curso 02');
+INSERT INTO Course (id, name) VALUES (3, 'Curso 03');
+INSERT INTO Course (id, name) VALUES (4, 'Curso 04');
+INSERT INTO Course (id, name) VALUES (5, 'Curso 05');
+INSERT INTO Course (id, name) VALUES (6, 'Curso 06');
+INSERT INTO Course (id, name) VALUES (7, 'Curso 07');
+INSERT INTO Course (id, name) VALUES (8, 'Curso 08');
+INSERT INTO Course (id, name) VALUES (9, 'Curso 09');
 INSERT INTO Course (id, name) VALUES (10, 'Curso 10');
 INSERT INTO Course (id, name) VALUES (11, 'Curso 11');
 INSERT INTO Course (id, name) VALUES (12, 'Curso 12');
@@ -51,15 +51,15 @@ INSERT INTO Course (id, name) VALUES (48, 'Curso 48');
 INSERT INTO Course (id, name) VALUES (49, 'Curso 49');
 INSERT INTO Course (id, name) VALUES (50, 'Curso 50');
 
-INSERT INTO Lesson (id, name, course_id) VALUES (1, 'Lição 1', 1);
-INSERT INTO Lesson (id, name, course_id) VALUES (2, 'Lição 2', 1);
-INSERT INTO Lesson (id, name, course_id) VALUES (3, 'Lição 3', 1);
-INSERT INTO Lesson (id, name, course_id) VALUES (4, 'Lição 4', 2);
-INSERT INTO Lesson (id, name, course_id) VALUES (5, 'Lição 5', 2);
-INSERT INTO Lesson (id, name, course_id) VALUES (6, 'Lição 6', 2);
-INSERT INTO Lesson (id, name, course_id) VALUES (7, 'Lição 7', 3);
-INSERT INTO Lesson (id, name, course_id) VALUES (8, 'Lição 8', 3);
-INSERT INTO Lesson (id, name, course_id) VALUES (9, 'Lição 9', 3);
+INSERT INTO Lesson (id, name, course_id) VALUES (1, 'Lição 01', 1);
+INSERT INTO Lesson (id, name, course_id) VALUES (2, 'Lição 02', 1);
+INSERT INTO Lesson (id, name, course_id) VALUES (3, 'Lição 03', 1);
+INSERT INTO Lesson (id, name, course_id) VALUES (4, 'Lição 04', 2);
+INSERT INTO Lesson (id, name, course_id) VALUES (5, 'Lição 05', 2);
+INSERT INTO Lesson (id, name, course_id) VALUES (6, 'Lição 06', 2);
+INSERT INTO Lesson (id, name, course_id) VALUES (7, 'Lição 07', 3);
+INSERT INTO Lesson (id, name, course_id) VALUES (8, 'Lição 08', 3);
+INSERT INTO Lesson (id, name, course_id) VALUES (9, 'Lição 09', 3);
 INSERT INTO Lesson (id, name, course_id) VALUES (10, 'Lição 10', 3);
 INSERT INTO Lesson (id, name, course_id) VALUES (11, 'Lição 11', 4);
 INSERT INTO Lesson (id, name, course_id) VALUES (12, 'Lição 12', 4);

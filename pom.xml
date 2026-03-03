@@ -51,7 +51,8 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
+            <artifactId>hibernate-processor</artifactId>
+            <version>7.2.6.Final</version>
             <scope>provided</scope>
         </dependency>
 
@@ -129,12 +130,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.15.0</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.hibernate.orm</groupId>
-                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <artifactId>hibernate-processor</artifactId>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
