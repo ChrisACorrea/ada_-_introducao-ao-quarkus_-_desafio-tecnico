@@ -55,6 +55,10 @@
             <version>7.2.6.Final</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
 
         <!-- Persistência -->
         <dependency>
