@@ -1,7 +1,6 @@
 package services;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import entities.Course;
 import entities.Course_;
@@ -56,26 +55,27 @@ public class CourseService {
         return Result.success(course);
     }
 
-    public Result<Course> updateCourse(Course course) {
-        courseRepository.findByIdOptional(course.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + course.getId()));
+    public Result<Course> updateCourse(Long id, Course course) {
+        courseRepository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + id));
 
         var courseViolations = validator.validate(course);
-        var lessonViolations = course.getLessons()
-                .stream()
-                .flatMap(lesson -> validator.validate(lesson).stream())
-                .toList();
+        // var lessonViolations = course.getLessons()
+        //         .stream()
+        //         .flatMap(lesson -> validator.validate(lesson).stream())
+        //         .toList();
 
-        var allViolations = Stream.concat(courseViolations.stream(), lessonViolations.stream())
-                .toList();
+        // var allViolations = Stream.concat(courseViolations.stream(), lessonViolations.stream())
+        //         .toList();
 
-        if (!allViolations.isEmpty()) {
-            var errors = allViolations.stream()
+        if (!courseViolations.isEmpty()) {
+            var errors = courseViolations.stream()
                     .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                     .toList();
             return Result.failure(errors);
         }
 
+        course = new Course(id, course.getName(), course.getLessons());
         courseRepository.getEntityManager().merge(course);
         return Result.success(course);
     }
@@ -99,7 +99,16 @@ public class CourseService {
         return Result.success(course.getLessons().stream().toList());
     }
 
-    public Result<Boolean> addLessonToCourse(Long courseId, Lesson lesson) {
+    public Result<Lesson> addLessonToCourse(Long courseId, Lesson lesson) {
+        var lessonViolations = validator.validate(lesson);
+
+        if (!lessonViolations.isEmpty()) {
+            var errors = lessonViolations.stream()
+                    .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                    .toList();
+            return Result.failure(errors);
+        }
+
         Course course = courseRepository.findByIdOptional(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado com o ID: " + courseId));
 
@@ -107,7 +116,7 @@ public class CourseService {
         course.addLesson(lessonWithCourse);
         courseRepository.getEntityManager().merge(course);
 
-        return Result.success(true);
+        return Result.success(lessonWithCourse);
     }
 
 }

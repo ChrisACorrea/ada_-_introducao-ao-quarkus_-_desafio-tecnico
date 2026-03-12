@@ -89,3 +89,18 @@ DELETE http://localhost:8080/courses/1 HTTP/1.1
 ###
 // Deletar curso por ID que não existe
 DELETE http://localhost:8080/courses/999 HTTP/1.1
+
+// LESSONs =======================
+
+###
+// Adicionar aula a curso com sucesso
+POST http://localhost:8080/courses/1/lessons HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Aula 1 - Introdução"
+}
+
+###
+// Pegar aulas de um curso
+GET http://localhost:8080/courses/1/lessons HTTP/1.1

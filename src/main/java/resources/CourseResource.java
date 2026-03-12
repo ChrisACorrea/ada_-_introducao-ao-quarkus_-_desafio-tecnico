@@ -51,7 +51,7 @@ public class CourseResource {
         var courseDtos = CourseReadDTO.fromEntities(result.data());
         var response = Result.success(courseDtos);
 
-        return Response.ok(response).build();
+        return Response.ok(courseDtos).build();
     }
 
     @GET
@@ -61,7 +61,7 @@ public class CourseResource {
         var courseDto = CourseReadDTO.fromEntity(course.data());
         var response = Result.success(courseDto);
 
-        return Response.ok(response).build();
+        return Response.ok(courseDto).build();
     }
 
     @POST
@@ -76,19 +76,19 @@ public class CourseResource {
 
         var response = Result.success(null);
 
-        return Response.created(URI.create("/courses/" + course.getId())).entity(response).build();
+        return Response.created(URI.create("/courses/" + course.getId())).entity(result.data()).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response updateCourse(Long id, CourseUpdateDTO courseUpdateDTO) {
-        if (!id.equals(courseUpdateDTO.id())) {
-            var response = Result.failure(List.of("ID do caminho e do corpo devem ser iguais."));
-            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
-        }
+    public Response updateCourse(Long id, CourseCreateDTO courseUpdateDTO) {
+        // if (!id.equals(courseUpdateDTO.id())) {
+        //     var response = Result.failure(List.of("ID do caminho e do corpo devem ser iguais."));
+        //     return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        // }
 
         var course = courseUpdateDTO.toEntity();
-        var result = courseService.updateCourse(course);
+        var result = courseService.updateCourse(id, course);
         if (result.failure()) {
             var response = Result.failure(result.errors());
             return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
@@ -97,7 +97,7 @@ public class CourseResource {
         var courseDto = CourseReadDTO.fromEntity(result.data());
         var response = Result.success(courseDto);
 
-        return Response.ok(response).build();
+        return Response.ok(courseDto).build();
     }
 
     @DELETE
@@ -120,7 +120,7 @@ public class CourseResource {
         var lessonDtos = LessonReadDTO.fromEntities(lessons.data());
         var response = Result.success(lessonDtos);
 
-        return Response.ok(response).build();
+        return Response.ok(lessonDtos).build();
     }
 
     @POST
@@ -136,6 +136,6 @@ public class CourseResource {
 
         var response = Result.success(null);
 
-        return Response.status(Status.CREATED).entity(response).build();
+        return Response.status(Status.CREATED).entity(result.data()).build();
     }
 }
